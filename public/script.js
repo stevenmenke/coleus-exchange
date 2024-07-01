@@ -1,5 +1,5 @@
 // Define the API URL as a constant
-const API_URL = 'https://coleus-exchange-api.stevenmenke.workers.dev/api/plants';
+const API_URL = '/api/plants';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('plant-form');
