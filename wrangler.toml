@@ -1,10 +1,12 @@
 name = "coleus-exchange"
 compatibility_date = "2024-07-01"
 
+# Specify the build directory for Cloudflare Pages
+pages_build_output_dir = "./public"
+
+
 [[kv_namespaces]]
 binding = "COLEUS_PLANTS"
 id = "8b84962882ad4c24b5a8b8985e00b4a3"
 preview_id = "8b84962882ad4c24b5a8b8985e00b4a3"
 
-# Specify the build directory for Cloudflare Pages
-#pages_build_output_dir = "./public"
