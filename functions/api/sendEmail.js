@@ -1,5 +1,5 @@
 export async function sendEmail(plantName, plantVariety) {
-    const API_KEY = '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';  // Replace with your actual Brevo API key
+    const API_KEY = process.env.BREVO_API_KEY;  // Replace with your actual Brevo API key
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
