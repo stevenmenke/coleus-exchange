@@ -1,13 +1,8 @@
-console.log = console.log.bind(console);
-
 export async function sendEmail(context, plantName, plantVariety) {
-    console.log('Attempting to send email for plant:', plantName, plantVariety);
     const API_KEY = context.env.BREVO_API_KEY;
-    console.log('API Key (first few characters):', API_KEY ? API_KEY.substring(0, 5) + '...' : 'Not found');
-    console.log('Environment:', context.env.ENVIRONMENT);
 
     if (!API_KEY) {
-        throw new Error('BREVO_API_KEY not found in environment variables');
+        throw new Error('Email service configuration error');
     }
 
     try {
@@ -24,18 +19,13 @@ export async function sendEmail(context, plantName, plantVariety) {
                 htmlContent: `<html><body><h1>New Coleus Plant Added</h1><p>Name: ${plantName}</p><p>Variety: ${plantVariety}</p></body></html>`,
             }),
         });
-        
-        console.log('Response status:', response.status);
-        const responseBody = await response.text();
-        console.log('Response body:', responseBody);
 
         if (!response.ok) {
-            throw new Error(`Failed to send email: ${response.status} ${responseBody}`);
+            throw new Error('Failed to send email');
         }
 
-        return JSON.parse(responseBody);
+        return await response.json();
     } catch (error) {
-        console.error('Error in sendEmail:', error);
-        throw error;
+        throw new Error('Email sending failed');
     }
 }

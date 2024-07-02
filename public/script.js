@@ -1,23 +1,19 @@
-// Define the API URL as a constant
 const API_URL = '/api/plants';
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('plant-form');
     const plantsList = document.getElementById('plants');
 
-    // Load plants when the page loads
     loadPlants();
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
         const name = document.getElementById('plant-name').value;
         const variety = document.getElementById('plant-variety').value;
-        
         if (name && variety) {
             await addPlant(name, variety);
             form.reset();
-            loadPlants();  // Reload the list after adding
+            loadPlants();
         }
     });
 
@@ -30,43 +26,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const plants = await response.json();
             displayPlants(plants);
         } catch (error) {
-            console.error('Error loading plants:', error);
             plantsList.innerHTML = '<li>Error loading plants. Please try again later.</li>';
         }
     }
 
     function displayPlants(plants) {
-        plantsList.innerHTML = '';
-        if (plants.length === 0) {
-            plantsList.innerHTML = '<li>No plants added yet.</li>';
-        } else {
-            plants.forEach(plant => {
-                const li = document.createElement('li');
-                li.textContent = `${plant.name} - ${plant.variety}`;
-                plantsList.appendChild(li);
-            });
-        }
+        plantsList.innerHTML = plants.length === 0 
+            ? '<li>No plants added yet.</li>' 
+            : plants.map(plant => `<li>${plant.name} - ${plant.variety}</li>`).join('');
     }
 
     async function addPlant(name, variety) {
         try {
             const response = await fetch(API_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, variety }),
             });
-            const result = await response.json();
-            console.log('Server response:', result);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}, message: ${result.error || 'Unknown error'}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            console.log('Plant added successfully:', result);
         } catch (error) {
-            console.error('Error adding plant:', error);
-            alert(`Failed to add plant. Error: ${error.message}`);
+            alert('Failed to add plant. Please try again.');
         }
-    }    
-    
+    }
 });
