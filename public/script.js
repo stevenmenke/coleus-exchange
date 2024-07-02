@@ -58,13 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ name, variety }),
             });
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
             }
             const result = await response.json();
             console.log('Plant added:', result);
         } catch (error) {
             console.error('Error adding plant:', error);
-            alert('Failed to add plant. Please try again.');
+            alert(`Failed to add plant. Error: ${error.message}`);
         }
     }
+    
 });

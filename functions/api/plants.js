@@ -1,4 +1,4 @@
-import { sendEmail } from './sendEmail.js'; // New module to handle email sending
+import { sendEmail } from './sendEmail.js';
 
 export async function onRequestGet(context) {
   const plants = await context.env.COLEUS_PLANTS.get('plants', 'json') || [];
@@ -8,19 +8,31 @@ export async function onRequestGet(context) {
 }
 
 export async function onRequestPost(context) {
-  const plant = await context.request.json();
-  let plants = await context.env.COLEUS_PLANTS.get('plants', 'json') || [];
-  plants.push(plant);
-  await context.env.COLEUS_PLANTS.put('plants', JSON.stringify(plants));
-
-  // Send an email notification
   try {
-    await sendEmail(plant.name, plant.variety);
-  } catch (error) {
-    console.error('Error sending email:', error);
-  }
+    const plant = await context.request.json();
+    console.log('Received plant data:', plant);
 
-  return new Response(JSON.stringify(plant), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+    let plants = await context.env.COLEUS_PLANTS.get('plants', 'json') || [];
+    plants.push(plant);
+    await context.env.COLEUS_PLANTS.put('plants', JSON.stringify(plants));
+
+    console.log('Attempting to send email...');
+    try {
+      await sendEmail(plant.name, plant.variety);
+      console.log('Email sent successfully');
+    } catch (emailError) {
+      console.error('Error sending email:', emailError);
+      // We're not throwing this error to allow the plant to be added even if email fails
+    }
+
+    return new Response(JSON.stringify(plant), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    console.error('Error in onRequestPost:', error);
+    return new Response(JSON.stringify({ error: error.message, stack: error.stack }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }
