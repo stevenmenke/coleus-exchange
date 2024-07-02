@@ -1,5 +1,8 @@
 import { sendEmail } from './sendEmail.js';
 
+console.log = console.log.bind(console);
+
+
 export async function onRequestGet(context) {
   const plants = await context.env.COLEUS_PLANTS.get('plants', 'json') || [];
   return new Response(JSON.stringify(plants), {
@@ -18,14 +21,13 @@ export async function onRequestPost(context) {
 
     console.log('Attempting to send email...');
     try {
-      await sendEmail(plant.name, plant.variety);
+      await sendEmail(context, plant.name, plant.variety);
       console.log('Email sent successfully');
     } catch (emailError) {
       console.error('Error sending email:', emailError);
-      // We're not throwing this error to allow the plant to be added even if email fails
-    }
+    }    
 
-    return new Response(JSON.stringify(plant), {
+    return new Response(JSON.stringify({ plant, message: 'Plant added and email sent' }), {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error) {

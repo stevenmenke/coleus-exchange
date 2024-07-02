@@ -57,16 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({ name, variety }),
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
-            }
             const result = await response.json();
-            console.log('Plant added:', result);
+            console.log('Server response:', result);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}, message: ${result.error || 'Unknown error'}`);
+            }
+            console.log('Plant added successfully:', result);
         } catch (error) {
             console.error('Error adding plant:', error);
             alert(`Failed to add plant. Error: ${error.message}`);
         }
-    }
+    }    
     
 });
